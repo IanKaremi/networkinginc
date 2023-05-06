@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     }
     //initialize variables and message buffer
     int clientfd, portno, n;
-    char buffer[255];
+    char buffer[255],buffer2[255], buffer3[255];
 
     //init server & client addresses
     struct sockaddr_in serv_addr;
@@ -57,13 +57,27 @@ int main(int argc, char *argv[]){
         error("Failed connection");
     }
 
-    printf("Please enter your name followed by registration number.\n");
+    printf("Please enter your serial number:\n");
+    fgets(buffer, 255, stdin);
+
+    printf("Please enter your name:\n");
+    fgets(buffer2, 255, stdin);
+
+    printf("Please enter your registration number:\n");
+    fgets(buffer3, 255, stdin);
+
+
     while(1)
     {   
         //clear the buffer, read input and send to server
-        bzero(buffer, 255);
-        fgets(buffer, 255, stdin);
+        
         n = send(clientfd, buffer, 255, 0);
+        if (n<0) error("Error on writing");
+
+        n = send(clientfd, buffer2, 255, 0);
+        if (n<0) error("Error on writing");
+
+        n = send(clientfd, buffer3, 255, 0);
         if (n<0) error("Error on writing");
 
         //receive and print text from server
