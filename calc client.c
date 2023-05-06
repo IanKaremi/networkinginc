@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
     {
         error("Failed connection");
     }
-
+    //send operands and operators to server
     S:bzero(buffer, 255);
     n= recv(clientfd, buffer, 255, 0);
     if(n<0)

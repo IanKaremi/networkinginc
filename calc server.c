@@ -10,35 +10,6 @@ void error(const char *msg)
     perror(msg);
     exit(1);
 }
-int file_write(char str[]){
-
-   
-    int count=1;
-   
- 
-    char c;
-    FILE *fptr;
-    fptr = fopen("/home/hp/Documents/Networking/test.txt","a+");
-    if (fptr == NULL)
-    {
-        printf("Error!");
-        return -1 ;
-
-    }
-  
-
-    for(c = getc(fptr); c!=EOF; c=getc(fptr))
-        if (c== '\n')
-            count= count+1;
-
-
-  
-    fprintf(fptr, "%d \t %s ", count, str);
-
-    fclose(fptr);
-    return 0;
-}
-
 int main(int argc, char *argv[]){
     //check if all arguments are given, otherwise throw error
     if(argc<2){
@@ -65,17 +36,22 @@ int main(int argc, char *argv[]){
     //get port number from CLI input
     portno = atoi(argv[1]);
 
+    /*Assign the port number and address family IPv4 to server */
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
 
+    //bind the socket to a port located in struct sockaddr
     if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
         error("Binding Failed");
     }
 
+    //listen on sockfd for a maximum of 4 connections
     listen(sockfd, 4);
     cli_len = sizeof(cli_addr);
 
+
+    //accept the connection and give it its own file descriptor and address information
     newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &cli_len);
 
     if(newsockfd < 0){
@@ -83,7 +59,7 @@ int main(int argc, char *argv[]){
     }
 
     int num1, num2, ans = 0, op;
-
+    //send a request for the numbers and read them
 S:  n = send(newsockfd, "Enter First integer:", strlen("Enter First integer:"),0);
     if (n<0) error("ERROR writing to socket");
     recv(newsockfd, &num1, sizeof(int), 0);

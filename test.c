@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
     struct sockaddr_in serv_addr, cli_addr;
     socklen_t cli_len;
 
-     struct addrinfo hints, *res, *p;
+    struct addrinfo hints, *res, *p;
     int status;
 
     memset(&hints, 0, sizeof hints);
@@ -78,59 +78,10 @@ int main(int argc, char *argv[]){
     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if(sockfd < 0){
         error("Socket failed");
+    }else{
+        printf("Successful");
     }
 
-    //clear any previous data from server address
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    //get port number from CLI input
-    portno = atoi(argv[1]);
-
-    /*Assign the port number and address family IPv4 to server */
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(portno);
-
-    //bind the socket to a port located in struct sockaddr
-    if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
-        error("Binding Failed");
-    }
-    //listen on sockfd for a maximum of 4 connections
-    listen(sockfd, 4);
-    cli_len = sizeof(cli_addr);
-
-    //accept the connection and give it its own file descriptor and address information
-    newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &cli_len);
-
-    if(newsockfd < 0){
-        error("Accepting error");
-    }
-
-    while (1)
-    {   //clear the buffer and read client inputs
-        bzero(buffer , 255);
-        n = recv(newsockfd, buffer, 255,0);
-
-
-        if(n <0){
-             error("Error on reading");
-        }else{
-            //send confirm message to client and pass to file_write function
-            n = send(newsockfd, success, strlen(success), 0);
-            buffer[strcspn(buffer, "\n")]=0;// removes newlines
-            file_write(buffer);
-            
-        }
-        printf("Client: %s\n", buffer);//for debugging
-
-        //read input and end
-        fgets(buffer, 255, stdin);
-        int i = strcmp("END", buffer);
-        if(i == 0) break;
-    }
-
-    //shutdown sockets
-    shutdown(newsockfd, 2);
-    shutdown(sockfd,2);
 
     return 0;
 }
