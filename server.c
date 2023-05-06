@@ -20,9 +20,6 @@ void error(const char *msg)
 //function to write to a file
 int file_write(char str[], char str2[], char str3[]){
 
-   
-    int count=1;
-    char c;
     FILE *fptr;
     fptr = fopen("/home/hp/Documents/Networking/test.txt","a+");
     if (fptr == NULL)
@@ -45,14 +42,14 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "\t Please input a port number.Terminating.\n");
         exit(1);
     }
-    int portno = atoi(argv[1]);
+
     //initialize variables and message buffer
     int sockfd, newsockfd, n;
     char buffer[255],buffer2[255], buffer3[255];
     char success[255] = "Saved.";
   
     //init server & client addresses
-    struct sockaddr_in serv_addr, cli_addr;
+    struct sockaddr_in  cli_addr;
     socklen_t cli_len;
 
 
@@ -65,6 +62,7 @@ int main(int argc, char *argv[]){
     hints.ai_protocol = 0;
     hints.ai_flags = AI_PASSIVE;
 
+    //argv[1] is port number
     if ((status = getaddrinfo(NULL, argv[1] , &hints, &res)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
         return 2;
@@ -75,12 +73,6 @@ int main(int argc, char *argv[]){
     if(sockfd < 0){
         error("Socket failed");
     }
-
-    //clear any previous data from server address
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    //get port number from CLI input
-    portno = atoi(argv[1]);
-
 
     //bind the socket to a port located in struct sockaddr
     if(bind(sockfd, res->ai_addr , res->ai_addrlen) < 0){
