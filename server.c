@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
         error("Binding Failed");
     }
     //listen on sockfd for a maximum of 4 connections
-    listen(sockfd, 4);
+A:  listen(sockfd, 4);
     cli_len = sizeof(cli_addr);
 
     //accept the connection and give it its own file descriptor and address information
@@ -111,6 +111,8 @@ int main(int argc, char *argv[]){
             
         }
         printf("Client: %s\t %s \t %s\n", buffer,buffer2,buffer3);//for debugging
+        shutdown(newsockfd, 2);
+        goto A;
 
         //read input and end
         fgets(buffer, 255, stdin);
@@ -119,7 +121,7 @@ int main(int argc, char *argv[]){
     }
 
     //shutdown sockets
-    shutdown(newsockfd, 2);
+    //shutdown(newsockfd, 2);
     shutdown(sockfd,2);
 
     return 0;
